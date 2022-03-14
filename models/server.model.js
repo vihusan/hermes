@@ -1,14 +1,20 @@
 const express = require('express');
 const morgan = require('morgan')
 const cors = require('cors');
+const { dbConnection } = require('../database/config');
 
 class server {
     constructor() {
         this.app = express();
         this.port = process.env.PORT;
-        this.pathUsuarios = '/api/usuarios';
+        this.pathUsuarios = '/hermes/usuarios';
+        this.connDB();
         this.middlewares();
         this.routes();
+    }
+
+    async connDB() {
+        await dbConnection();
     }
 
     middlewares() {

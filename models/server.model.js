@@ -8,6 +8,8 @@ class server {
         this.app = express();
         this.port = process.env.PORT;
         this.pathUsuarios = '/hermes/usuarios';
+        this.pathAuth = '/hermes/auth'
+
         this.connDB();
         this.middlewares();
         this.routes();
@@ -32,7 +34,9 @@ class server {
     }
 
     routes() {
+        this.app.use(this.pathAuth, require('../routes/auth.route'))
         this.app.use(this.pathUsuarios, require('../routes/usuarios.route'));
+
     }
 
     listen() {

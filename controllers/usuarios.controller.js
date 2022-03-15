@@ -72,8 +72,10 @@ const usuariosPatch = (req, res = response) => {
 
 const usuariosDelete = async (req = request, res = response) => {
     const { id } = req.headers;
+    const { usuario } = req;
 
-    const usuario = await Usuario.findByIdAndUpdate(id, { estado: false })
+
+    const usuario2 = await Usuario.findByIdAndUpdate(id, { estado: false })
 
     res.status(200).json({
         "ok": true,

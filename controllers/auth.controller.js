@@ -50,8 +50,37 @@ const login = async (req, res = response) => {
 const loginGoogle = async (req = request, res = response) => {
     const { id_token } = req.body;
     try {
-        const googleUser = await googleVerify(id_token);
-        console.log("Google user : ",  googleUser);
+        const {email, img, nombre} = await googleVerify(id_token);
+        let usuario = await Usuario.findOne({email});
+
+        if(!usuario) {
+            // crear el usuario
+            const data = {
+                nombre,
+                email,
+                img,
+                role: 'USER_ROLE',
+                password:'default',
+                google : true
+            }
+
+            usuario = new Usuario(data);
+            await usuario.save();
+        }
+
+        if(!usuario.estado){
+            return res.status(401).json({
+                msg : "Hable con el administrador usuario bloqueado"
+            });
+        }
+
+        //Generar el JWT
+        const token = await generarJWT(usuario.id);
+
+        res.json({
+            usuario,
+            token
+        });
     }catch(error){
         json.status(400).json({
             ok : false,

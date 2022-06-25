@@ -7,7 +7,8 @@ const { googleVerify } = require('../helpers/google_verify');
 
 
 const login = async (req, res = response) => {
-    const { email, password } = req.body;
+    const { email, password } = req.headers;
+    console.log(email, " ", password);
 
     try {
         // vefificar email

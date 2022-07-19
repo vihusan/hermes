@@ -4,8 +4,8 @@ const Usuario = require("../models/usuario.model");
 
 
 const validarJWT = async (req = request, res = response, next) => {
-    const token = req.header('x-token')
-
+    const token = req.headers.xtoken;
+    
     if (!token) {
         return res.status(500).json({
             msg: "Sin autorización!"

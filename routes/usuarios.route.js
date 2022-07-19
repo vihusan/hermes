@@ -7,10 +7,8 @@ const { esRoleValido, emailExiste, idExiste } = require('../helpers/db_validator
 
 const { validarCampos, validarJWT, esAdminRole, tieneRoles } = require('../middlewares/index');
 
-router.get('/', [
-    check("limit", "No es numero").isNumeric(),
-    check("desde", "No es numero").isNumeric(),
-    validarCampos
+router.get('/',[
+   validarJWT
 ], usuariosGet);
 
 router.post('/', [

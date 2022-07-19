@@ -1,25 +1,20 @@
 const { response, request } = require('express');
 const Usuario = require('../models/usuario.model')
 const bcryptjs = require('bcryptjs');
+const { generarJWT } = require("../helpers/jwt_generator");
 
 
 const usuariosGet = async (req = request, res = response) => {
     try {
-        const { limit = 2, desde = 0 } = req.query
-        const query = { estado: true };
+        const { id } = req.headers        
+        const usuario = await Usuario.findById(id);
 
-        const [misUsuarios, total] = await Promise.all([
-            Usuario.find(query)
-                .skip(desde)
-                .limit(limit),
-            Usuario.countDocuments(query)
-        ]);
-
-        res.status(200).json({
-            "ok": true,
-            total,
-            data: misUsuarios
-        });
+        if (usuario) {
+            res.status(200).json({
+                "ok": true,
+                usuario
+            });
+        }
     } catch (error) {
         console.log(error);
     }
@@ -27,10 +22,8 @@ const usuariosGet = async (req = request, res = response) => {
 
 const usuariosPost = async (req = request, res = response) => {
     try {
-        console.log('entre a controller');
         const { nombre, email, password, role } = req.body;
         const usuario = new Usuario({ nombre, email, password, role });
-        console.log(usuario);
 
         //Encriptar la contraseña 
         const salt = bcryptjs.genSaltSync();
@@ -39,8 +32,12 @@ const usuariosPost = async (req = request, res = response) => {
         // guardar en la base de datos
         await usuario.save();
 
+        //Generar el JWT
+        const token = await generarJWT(usuario.id);
+
         res.status(200).json({
             "ok": true,
+            token,
             usuario
         });
     } catch (error) {
